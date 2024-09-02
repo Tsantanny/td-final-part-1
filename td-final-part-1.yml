@@ -1,0 +1,263 @@
+openapi: 3.0.3
+info:
+  title: Football Championship Management API
+  version: 1.0.0
+
+servers:
+  - url: https://localhost.std230109.com
+
+paths:
+  /competitions:
+    get:
+      summary: Retrieve a list of competitions
+      tags:
+        - competition
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of competitions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Competition"
+
+    post:
+      summary: Create a new competition
+      tags:
+        - competition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCompetition"
+      responses:
+        "201":
+          description: Competition created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Competition"
+
+  /teams:
+    get:
+      summary: Retrieve a list of teams
+      tags:
+        - team
+      parameters:
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: teamName
+          in: query
+          schema:
+            type: string
+          description: Filter teams by their name
+      responses:
+        "200":
+          description: List of teams
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Team"
+
+    post:
+      summary: Create a new team
+      tags:
+        - team
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTeam"
+      responses:
+        "201":
+          description: Team created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Team"
+
+  /teams/{teamId}/players:
+    get:
+      summary: Retrieve a list of players for a specific team
+      tags:
+        - player
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pageSize
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: playerName
+          in: query
+          schema:
+            type: string
+          description: Filter players by their name
+      responses:
+        "200":
+          description: List of players in the specified team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Player"
+
+    post:
+      summary: Add a list of players to a specific team
+      tags:
+        - player
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CreatePlayer"
+      responses:
+        "201":
+          description: Players added to the team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Player"
+
+    put:
+      summary: Update a list of players for a specific team
+      tags:
+        - player
+      parameters:
+        - name: teamId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Player"
+      responses:
+        "200":
+          description: Players updated for the team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Player"
+
+components:
+  schemas:
+    Competition:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        location:
+          type: string
+
+    CreateCompetition:
+      type: object
+      properties:
+        name:
+          type: string
+        location:
+          type: string
+
+    Team:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slogan:
+          type: string
+        competitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Competition"
+        players:
+          type: array
+          items:
+            $ref: "#/components/schemas/Player"
+
+    CreateTeam:
+      type: object
+      properties:
+        name:
+          type: string
+        slogan:
+          type: string
+
+    Player:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        number:
+          type: integer
+        strongFoot:
+          type: string
+          enum: [Left, Right]
+
+    CreatePlayer:
+      type: object
+      properties:
+        name:
+          type: string
+        number:
+          type: integer
+        strongFoot:
+          type: string
+          enum: [Left, Right]
